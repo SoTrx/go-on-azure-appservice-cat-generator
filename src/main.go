@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
+// These can be harcoded, there is a nginx proxy anyway
 const SERVER_PORT = 8081
 const SERVER_HOST = "0.0.0.0"
 
@@ -47,6 +51,15 @@ func handleServerError(err error, w http.ResponseWriter) {
 }
 
 func main() {
+	// Try to get the API Key or die
+	err := godotenv.Load()
+	if err != nil {
+		logger.warn.Println("No .env file detected")
+	}
+	if apiKey := os.Getenv("API_KEY"); len(apiKey) == 0 {
+		logger.err.Panicln("No API KEY detected, aborting")
+	}
+
 	logger.info.Println(fmt.Sprintf("Now starting server on %s:%d", SERVER_HOST, SERVER_PORT))
 	http.HandleFunc("/", serveRandomCat)
 	logger.err.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", SERVER_HOST, SERVER_PORT), nil))

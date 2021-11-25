@@ -7,9 +7,8 @@ WORKDIR /app
 COPY . .
 # Build the app, strip it (LDFLAGS) and optimize it with UPX
 RUN apk add upx && \
- cd src && \
- CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" . && \
- upx --best --lzma cat-generator
+ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./build/cat-generator -ldflags="-w -s" ./src/ && \
+ upx --best --lzma ./build/cat-generator
 
 ####################################################################################################
 ## Final image
@@ -17,5 +16,5 @@ RUN apk add upx && \
 FROM scratch
 # Import certificates from alpine, scratch doesn't have any cert by default 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder "/app/cat-generator" "/app/"
+COPY --from=builder "/app/build/cat-generator" "/app/"
 ENTRYPOINT ["/app/cat-generator"]

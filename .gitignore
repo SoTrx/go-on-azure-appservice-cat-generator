@@ -2,3 +2,5 @@
 .env
 .vscode
 cat-generator.*
+build
+.env

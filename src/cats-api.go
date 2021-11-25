@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 type Cat struct {
@@ -11,7 +12,10 @@ type Cat struct {
 }
 
 func GetRandomCatUrl() (string, error) {
-	resp, err := http.Get("https://api.thecatapi.com/v1/images/search")
+	req, _ := http.NewRequest("GET", "https://api.thecatapi.com/v1/images/search", nil)
+	req.Header.Set("x-api-key", os.Getenv("API_KEY"))
+	client := new(http.Client)
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}

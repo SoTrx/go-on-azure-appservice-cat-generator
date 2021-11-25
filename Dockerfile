@@ -1,4 +1,4 @@
-# Dockerfile for an appservice go container
+# Dockerfile for an appservice go container (expected size 18Mo)
 ####################################################################################################
 ## Builder
 ####################################################################################################
@@ -7,9 +7,8 @@ WORKDIR /app
 COPY . .
 # Build the app, strip it (LDFLAGS) and optimize it with UPX
 RUN apk add upx && \
-    cd src && \ 
-    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" . && \
-    upx --best --lzma cat-generator
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./build/cat-generator -ldflags="-w -s" ./src/ && \
+    upx --best --lzma ./build/cat-generator
 
 ####################################################################################################
 ## Final image
@@ -57,7 +56,7 @@ RUN apk add --no-cache openrc openssh nginx su-exec &&\
 
 WORKDIR /app
 # Copy the built app, only allowing our app user to execute it
-COPY --from=builder --chmod=0500 --chown=appuser:appuser  /app/src/cat-generator ./
+COPY --from=builder --chmod=0500 --chown=appuser:appuser  /app/build/cat-generator ./
 
 WORKDIR /home/site/wwwroot
 EXPOSE 80 2222
