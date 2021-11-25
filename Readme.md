@@ -1,4 +1,4 @@
-# Rust on Azure appservice - Cat generator 
+# Go on Azure appservice - Cat generator 
 
 Live demo : https://demo-cats-api-go.azurewebsites.net/
 
