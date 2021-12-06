@@ -59,5 +59,6 @@ WORKDIR /app
 COPY --from=builder --chmod=0500 --chown=appuser:appuser  /app/build/cat-generator ./
 
 WORKDIR /home/site/wwwroot
+COPY --chmod=0444 assets/ .
 EXPOSE 80 2222
 ENTRYPOINT [ "/bin/init_container.sh" ]
